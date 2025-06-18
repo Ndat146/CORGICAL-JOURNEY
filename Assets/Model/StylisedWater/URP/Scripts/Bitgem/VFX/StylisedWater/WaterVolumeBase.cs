@@ -97,6 +97,11 @@ namespace Bitgem.VFX.StylisedWater
 
         public float? GetHeight(Vector3 _position)
         {
+            if (tiles == null)
+            {
+                Debug.LogWarning("tiles is null. Did you forget to call Rebuild()?");
+                return null;
+            }
             // convert the position to a tile
             var x = Mathf.FloorToInt((_position.x - transform.position.x + 0.5f) / TileSize);
             var z = Mathf.FloorToInt((_position.z - transform.position.z + 0.5f) / TileSize);

@@ -2,37 +2,42 @@
 
 public class MapSpawner : MonoBehaviour
 {
-    public MapData mapData;  
-    public GameObject soilPrefab;      
-    public GameObject soilWithTreePrefab; 
+    public MapDataManager mapDataManager; 
+    public GameObject GrassPrefab;
+    public GameObject GrassWithTreePrefab;
+    public GameObject water;
 
     void Start()
     {
-        SpawnMap();
+        water.SetActive(true);
+        int levelIndex = LevelManager.Instance?.selectedLevelIndex ?? 0;
+        MapData currentMap = mapDataManager.levels[levelIndex];
+        SpawnMapFromData(currentMap);
     }
 
-    void SpawnMap()
+    public void SpawnMapFromData(MapData mapData)
     {
-        
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+
         foreach (var block in mapData.blocks)
         {
-            GameObject blockPrefab = null;
-
-            // Chọn prefab phù hợp dựa trên loại block
+            GameObject prefab = null;
             switch (block.blockType)
             {
                 case BlockType.Grass:
-                    blockPrefab = soilPrefab;
+                    prefab = GrassPrefab;
                     break;
                 case BlockType.GrassWithTree:
-                    blockPrefab = soilWithTreePrefab;
+                    prefab = GrassWithTreePrefab;
                     break;
             }
 
-            
-            if (blockPrefab != null)
+            if (prefab != null)
             {
-                Instantiate(blockPrefab, block.position, Quaternion.identity);
+                Instantiate(prefab, block.position, Quaternion.identity, this.transform);
             }
         }
     }

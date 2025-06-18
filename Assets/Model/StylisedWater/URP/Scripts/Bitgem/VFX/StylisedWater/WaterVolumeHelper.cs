@@ -30,6 +30,7 @@ namespace Bitgem.VFX.StylisedWater
 
         #region Public methods
 
+
         public float? GetHeight(Vector3 _position)
         {
             // ensure a water volume
@@ -66,6 +67,11 @@ namespace Bitgem.VFX.StylisedWater
         private void Awake()
         {
             instance = this;
+
+            if (WaterVolume != null)
+            {
+                WaterVolume.Rebuild();
+            }
         }
 
         #endregion
