@@ -6,7 +6,7 @@ public class MapSpawner : MonoBehaviour
     public GameObject GrassPrefab;
     public GameObject GrassWithTreePrefab;
     public GameObject water;
-
+    public GameObject PlayerPrefab;
     void Start()
     {
         water.SetActive(true);
@@ -39,6 +39,10 @@ public class MapSpawner : MonoBehaviour
             {
                 Instantiate(prefab, block.position, Quaternion.identity, this.transform);
             }
+        }
+        if (mapData.playerInfo.position != Vector3.zero && PlayerPrefab != null)
+        {
+            Instantiate(PlayerPrefab, mapData.playerInfo.position, mapData.playerInfo.rotation, this.transform);
         }
     }
 }

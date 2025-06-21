@@ -9,6 +9,12 @@ public class MapData : ScriptableObject
         public BlockType blockType; 
         public Vector3 position;    
     }
-
-    public BlockInfo[] blocks; 
+    [System.Serializable]
+    public struct PlayerInfo
+    {
+        public Vector3 position;  
+        public Quaternion rotation;  
+    }
+    public BlockInfo[] blocks;
+    public PlayerInfo playerInfo;
 }
