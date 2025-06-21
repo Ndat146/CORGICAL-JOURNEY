@@ -9,13 +9,36 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     private bool isMoving = false;
 
+    private Quaternion targetRotation;
+    private bool isRotating = false;
+    public float rotateSpeed = 360f; 
+
     private void Start()
     {
         animator = GetComponent<Animator>();
+        targetRotation = transform.rotation;
+
     }
 
     private void Update()
     {
+        if (!isMoving && !isRotating)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                targetRotation *= Quaternion.Euler(0f, -90f, 0f);
+                animator.SetInteger("AnimationID", 4);
+                StartCoroutine(RotateSmoothly());
+            }
+            else if (Input.GetKeyDown(KeyCode.E))
+            {
+                targetRotation *= Quaternion.Euler(0f, 90f, 0f);
+                animator.SetInteger("AnimationID", 4);
+                StartCoroutine(RotateSmoothly());
+            }
+        }
+
+
         if (isMoving) return;
 
         Vector3 direction = Vector3.zero;
@@ -47,6 +70,24 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 targetPosition = transform.position + direction * moveDistance;
         return IsBlockNormalAt(targetPosition);
+    }
+    private IEnumerator RotateSmoothly()
+    {
+        isRotating = true;
+        Quaternion startRotation = transform.rotation;
+        float elapsed = 0f;
+        float duration = 90f / rotateSpeed; 
+
+        while (elapsed < duration)
+        {
+            transform.rotation = Quaternion.Slerp(startRotation, targetRotation, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.rotation = targetRotation;
+        animator.SetInteger("AnimationID", 0);
+        isRotating = false;
     }
 
     private void TryMove(Vector3 direction)
