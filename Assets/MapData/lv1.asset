@@ -14,11 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blocks:
   - blockType: 0
-    position: {x: 0, y: 0, z: 0}
+    position: {x: 0, y: 0.2, z: 0}
+  - blockType: 1
+    position: {x: 1, y: 0.2, z: 0}
   - blockType: 0
-    position: {x: 1, y: 0, z: 0}
+    position: {x: 1, y: 0.2, z: 1}
   - blockType: 0
-    position: {x: 2, y: 0, z: 1}
+    position: {x: 1, y: 0.2, z: 2}
+  - blockType: 0
+    position: {x: 1, y: 0.2, z: 3}
+  - blockType: 0
+    position: {x: 1, y: 0.2, z: 4}
+  - blockType: 0
+    position: {x: 0, y: 0.2, z: 1}
+  - blockType: 0
+    position: {x: 0, y: 0.2, z: 2}
+  - blockType: 0
+    position: {x: 0, y: 0.2, z: 3}
+  - blockType: 0
+    position: {x: 0, y: 0.2, z: 4}
   playerInfo:
-    position: {x: 0, y: 0.5, z: 0}
+    position: {x: 0, y: 0.5, z: 4}
     rotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
