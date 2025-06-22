@@ -9,9 +9,11 @@ public class MapSpawner : MonoBehaviour
     public GameObject PlayerPrefab;
     public GameObject StickPrefab;  
     public GameObject GrassWithPalmPrefab;
+    public GameObject HomeBtn;
     void Start()
     {
         water.SetActive(true);
+        HomeBtn.SetActive(true);
         int levelIndex = LevelManager.Instance?.selectedLevelIndex ?? 0;
         MapData currentMap = mapDataManager.levels[levelIndex];
         SpawnMapFromData(currentMap);

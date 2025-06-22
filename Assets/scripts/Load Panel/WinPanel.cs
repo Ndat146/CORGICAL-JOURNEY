@@ -1,14 +1,20 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class WinPanel : MonoBehaviour
 {
     public GameObject winPanel;  
-    public Button playAgainButton;  
+    public Button playAgainButton;
+    private Vector3 originalScale;
+    private bool isShowing = false;
+
 
     private void Start()
     {
+        originalScale = winPanel != null ? winPanel.transform.localScale : Vector3.one;
+
         if (winPanel == null)
         {
             Debug.LogError("Win Panel chưa được gán trong Inspector.");
@@ -32,11 +38,17 @@ public class WinPanel : MonoBehaviour
 
     public void ShowWinPanel()
     {
-        if (winPanel != null)
+        if (winPanel != null && !isShowing)
         {
-            winPanel.SetActive(true);  
+            isShowing = true;
+
+            DOTween.Kill(winPanel.transform); 
+            winPanel.SetActive(true);
+
+            winPanel.transform.localScale = Vector3.zero;
+            winPanel.transform.DOScale(originalScale, 0.5f).SetEase(Ease.OutBack);
         }
-        else
+        else if (winPanel == null)
         {
             Debug.LogError("Win Panel không được gán hoặc đã bị hủy.");
         }
@@ -51,7 +63,13 @@ public class WinPanel : MonoBehaviour
     {
         if (winPanel != null)
         {
-            winPanel.SetActive(false);  
+            winPanel.SetActive(false);
+            isShowing = false; 
         }
+    }
+
+    public void BackHome()
+    {
+        SceneManager.LoadScene("Home");
     }
 }

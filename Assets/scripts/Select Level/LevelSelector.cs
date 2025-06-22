@@ -1,11 +1,16 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using DG.Tweening;
+using System.Collections;
 
 public class LevelSelector : MonoBehaviour
 {
     public MapDataManager mapDataManager;  
-    public Button[] levelButtons;  
+    public Button[] levelButtons;
+
+    public Transform homeButtonTransform;     
+    public Transform selectLevelBannerTransform;
 
     void OnEnable()
     {
@@ -19,7 +24,16 @@ public class LevelSelector : MonoBehaviour
 
     void Start()
     {
+        DOTween.KillAll();
+
         SetupLevelButtons();
+        StartCoroutine(AnimateLevelButtons());
+        homeButtonTransform.localScale = Vector3.zero;
+        homeButtonTransform.DOScale(Vector3.one * 1f, 0.5f).SetEase(Ease.OutBack);
+
+        selectLevelBannerTransform.localScale = Vector3.zero;
+        selectLevelBannerTransform.DOScale(Vector3.one * 1f, 0.5f).SetEase(Ease.OutBack).SetDelay(0.1f);
+
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -32,6 +46,7 @@ public class LevelSelector : MonoBehaviour
 
     void SetupLevelButtons()
     {
+
         if (LevelManager.Instance == null)
         {
             Debug.LogError("LevelManager chưa được khởi tạo.");
@@ -51,5 +66,33 @@ public class LevelSelector : MonoBehaviour
         LevelManager.Instance.selectedLevelIndex = levelIndex;
 
         SceneManager.LoadScene("Game");
+    }
+    public void BackHome()
+    {
+        SceneManager.LoadScene("Home");
+    }
+    IEnumerator AnimateLevelButtons()
+    {
+        Vector3 originalScale = Vector3.one * 2f; 
+
+        foreach (Button btn in levelButtons)
+        {
+            btn.transform.localScale = Vector3.zero; 
+        }
+
+        yield return new WaitForSeconds(0.3f); 
+
+        for (int i = 0; i < levelButtons.Length; i++)
+        {
+            Button btn = levelButtons[i];
+
+            btn.transform.DOScale(originalScale * 1.1f, 0.4f)
+                .SetEase(Ease.OutBack)
+                .OnComplete(() => {
+                    btn.transform.localScale = originalScale;
+                });
+
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 }

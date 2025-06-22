@@ -1,42 +1,44 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using DG.Tweening; 
 
 public class LoadPanel : MonoBehaviour
 {
     public GameObject homePanel;
     public GameObject helpPanel;
-    //public GameObject winPanel;
-    //public Button playAgainButton;
 
     void Start()
     {
         helpPanel.SetActive(false);
+        BackHome();
     }
+
     public void GoHelp()
     {
+        DOTween.KillAll();
+
         helpPanel.SetActive(true);
-        homePanel.SetActive(false);
+        helpPanel.transform.localScale = Vector3.zero;
+        helpPanel.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack); 
+
+        homePanel.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack)
+            .OnComplete(() => homePanel.SetActive(false));
     }
+
     public void BackHome()
     {
-        helpPanel.SetActive(false);
+        DOTween.KillAll();
+
         homePanel.SetActive(true);
+        homePanel.transform.localScale = Vector3.zero;
+        homePanel.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+
+        helpPanel.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack)
+            .OnComplete(() => helpPanel.SetActive(false));
     }
-    //public void OnWin()
-    //{
-    //    Debug.Log("Level Completed! Moving to the next level...");
-    //    ShowWinPanel();
-    //}
-
-    //private void ShowWinPanel()
-    //{
-    //    winPanel.SetActive(true);
-    //}
-
-    //public void GoSelectLevel()
-    //{
-
-    //    SceneManager.LoadScene("LevelSelect");
-    //}
+    public void GoSelectLevel()
+    {
+        SceneManager.LoadScene("LevelSelect");
+    }
 }
