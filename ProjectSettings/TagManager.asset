@@ -7,6 +7,7 @@ TagManager:
   - NormalBlock
   - Stick
   - Tree
+  - PalmBlock
   layers:
   - Default
   - TransparentFX

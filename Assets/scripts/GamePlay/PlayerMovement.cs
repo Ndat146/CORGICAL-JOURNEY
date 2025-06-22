@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 lastPlayerPosition;
     private Vector3 lastStickPosition;
 
+    //private LevelManager levelManager;
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -73,6 +74,10 @@ public class PlayerMovement : MonoBehaviour
                 isMoving = false; 
                 animator.SetInteger("AnimationID", 0); 
             }
+        }
+        if (!isMoving && !isRotating)
+        {
+            CheckWinCondition(); 
         }
 
     }
@@ -151,7 +156,7 @@ public class PlayerMovement : MonoBehaviour
 
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag("NormalBlock"))
+            if (hitCollider.CompareTag("NormalBlock") || hitCollider.CompareTag("PalmBlock"))
             {
                 return true;
             }
@@ -263,4 +268,27 @@ public class PlayerMovement : MonoBehaviour
     public void BowCheck()
     {
     }
+
+    private void CheckWinCondition()
+    {
+        if (isHoldingStick && currentStick != null && IsStandingOnPalmBlock())
+        {
+            Debug.Log("You Win!");
+            //LevelManager.Instance.OnWin();
+        }
+    }
+
+    private bool IsStandingOnPalmBlock()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, overlapRadius);
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("PalmBlock"))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -1,5 +1,6 @@
 ﻿public enum BlockType
 {
     Grass,        
-    GrassWithTree 
+    GrassWithTree,
+    GrassWithPalm
 }

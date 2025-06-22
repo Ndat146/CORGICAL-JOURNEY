@@ -15,6 +15,14 @@ public class MapData : ScriptableObject
         public Vector3 position;  
         public Quaternion rotation;  
     }
+    [System.Serializable]
+    public struct Item
+    {
+        public Vector3 position;
+        public Quaternion rotation;
+        public GameObject itemPrefab;
+    }
     public BlockInfo[] blocks;
     public PlayerInfo playerInfo;
+    public Item[] items;
 }
