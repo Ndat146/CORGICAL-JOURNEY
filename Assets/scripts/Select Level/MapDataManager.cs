@@ -1,7 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MapDataManager : MonoBehaviour
 {
+    public static MapDataManager Instance { get; private set; }  
+
     public MapData[] levels;  
     private int currentLevel = 0;  
 
@@ -16,5 +18,17 @@ public class MapDataManager : MonoBehaviour
         {
             currentLevel = levelIndex;
         }
+    }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject); 
+            return;
+        }
+
+        Instance = this;  
+        DontDestroyOnLoad(gameObject);  
     }
 }

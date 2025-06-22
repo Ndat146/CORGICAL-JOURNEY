@@ -22,7 +22,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 lastPlayerPosition;
     private Vector3 lastStickPosition;
 
-    //private LevelManager levelManager;
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -268,13 +267,20 @@ public class PlayerMovement : MonoBehaviour
     public void BowCheck()
     {
     }
-
+    private WinPanel winPanel;
     private void CheckWinCondition()
     {
         if (isHoldingStick && currentStick != null && IsStandingOnPalmBlock())
         {
-            Debug.Log("You Win!");
-            //LevelManager.Instance.OnWin();
+            WinPanel winPanelScript = Object.FindFirstObjectByType<WinPanel>();  // Tìm WinPanel trong scene
+            if (winPanelScript != null)
+            {
+                winPanelScript.OnWin();  // Gọi phương thức OnWin() từ script WinPanel
+            }
+            else
+            {
+                Debug.LogError("Không tìm thấy đối tượng WinPanel trong scene.");
+            }
         }
     }
 
