@@ -81,37 +81,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 targetPosition = transform.position + direction * moveDistance;
 
         if (!IsBlockNormalAt(targetPosition))
-            return false;
-
-        if (!isHoldingStick || currentStick == null)
-            return true;
-
-        endA = currentStick.transform.Find("EndA");
-        endB = currentStick.transform.Find("EndB");
-
-        if (endA == null || endB == null)
-            return true;
-
-        Vector3Int playerGridPos = Vector3Int.RoundToInt(transform.position);
-        Vector3Int endAGridPos = Vector3Int.RoundToInt(endA.position);
-        Vector3Int endBGridPos = Vector3Int.RoundToInt(endB.position);
-
-        bool isEndAInMouth = playerGridPos == endAGridPos;
-        bool isEndBInMouth = playerGridPos == endBGridPos;
-
-        if (!isEndAInMouth && !isEndBInMouth)
-            return true;
-
-        Transform mouthEnd = isEndAInMouth ? endA : endB;
-        Transform otherEnd = isEndAInMouth ? endB : endA;
-
-        Vector3 stickOffset = otherEnd.position - mouthEnd.position;
-
-        Vector3 predictedMouthEnd = transform.position + direction * moveDistance;
-        Vector3 predictedOtherEnd = predictedMouthEnd + stickOffset;
-
-        if (IsBlockTreeAt(predictedOtherEnd))
-            return false;
+            return false;    
 
         return true;
     }
@@ -120,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
         Collider[] hitColliders = Physics.OverlapSphere(position, overlapRadius);
         foreach (var hitCollider in hitColliders)
         {
-            if (hitCollider.CompareTag("Tree")) // Tag bạn dùng cho block chứa cây
+            if (hitCollider.CompareTag("Tree")) 
             {
                 return true;
             }
@@ -195,20 +165,28 @@ public class PlayerMovement : MonoBehaviour
         isMoving = true;
         animator.SetInteger("AnimationID", 3);
 
-        float timeElapsed = 0f;
         float duration = 1f / moveSpeed;
+        float elapsed = 0f;
         Vector3 startPosition = transform.position;
 
-        while (timeElapsed < duration)
+        Vector3 stickStartPosition = currentStick != null ? currentStick.transform.position : Vector3.zero;
+
+        while (elapsed < duration)
         {
-            transform.position = Vector3.Lerp(startPosition, targetPosition, timeElapsed / duration);
-            timeElapsed += Time.deltaTime;
+            transform.position = Vector3.Lerp(startPosition, targetPosition, elapsed / duration);
+
+            if (currentStick != null)
+            {
+            }
+
+            elapsed += Time.deltaTime;
             yield return null;
         }
-
         transform.position = targetPosition;
 
-        // Sau khi di chuyển xong, kiểm tra va chạm với cây
+        // Kiểm tra đầu còn lại có đụng cây không
+        bool needRollback = false;
+
         if (isHoldingStick && currentStick != null)
         {
             endA = currentStick.transform.Find("EndA");
@@ -216,22 +194,48 @@ public class PlayerMovement : MonoBehaviour
 
             if (endA != null && endB != null)
             {
-                bool isEndAInMouth = Vector3.Distance(endA.position, transform.position) < 0.3f;
-                bool isEndBInMouth = Vector3.Distance(endB.position, transform.position) < 0.3f;
+                Vector3Int playerGrid = Vector3Int.RoundToInt(transform.position);
+                Vector3Int endAGrid = Vector3Int.RoundToInt(endA.position);
+                Vector3Int endBGrid = Vector3Int.RoundToInt(endB.position);
+
+                bool isEndAInMouth = playerGrid == endAGrid;
+                bool isEndBInMouth = playerGrid == endBGrid;
 
                 Transform otherEnd = isEndAInMouth ? endB : endA;
+
                 if (IsBlockTreeAt(otherEnd.position))
                 {
-                    // Quay lại vị trí cũ
-                    transform.position = lastPlayerPosition;
-                    currentStick.transform.position = lastStickPosition;
+                    needRollback = true;
                 }
             }
+        }
+
+        if (needRollback)
+        {
+            yield return StartCoroutine(RollbackToPosition(startPosition, stickStartPosition));
         }
 
         animator.SetInteger("AnimationID", 0);
         isMoving = false;
     }
+
+    private IEnumerator RollbackToPosition(Vector3 playerStart, Vector3 stickStart)
+    {
+        float rollbackDuration = 0.15f;
+        float rollbackElapsed = 0f;
+        Vector3 playerCurrent = transform.position;
+
+        while (rollbackElapsed < rollbackDuration)
+        {
+            transform.position = Vector3.Lerp(playerCurrent, playerStart, rollbackElapsed / rollbackDuration);
+
+            rollbackElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = playerStart;
+    }
+
     private void OnDrawGizmos()
     {
         if (!isHoldingStick || currentStick == null)
@@ -253,7 +257,6 @@ public class PlayerMovement : MonoBehaviour
 
         Transform otherEnd = isEndAInMouth ? endB : endA;
 
-        // Vẽ hình cầu đại diện vùng kiểm tra va chạm
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(otherEnd.position, overlapRadius);
     }
