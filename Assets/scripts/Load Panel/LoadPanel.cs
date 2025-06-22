@@ -7,11 +7,19 @@ public class LoadPanel : MonoBehaviour
 {
     public GameObject homePanel;
     public GameObject helpPanel;
-
+    public AudioClip winSound;
+    private AudioSource audioSource;
     void Start()
     {
         helpPanel.SetActive(false);
         BackHome();
+
+        audioSource = GetComponent<AudioSource>();
+
+        if (audioSource != null && !audioSource.isPlaying)
+        {
+            audioSource.Play();
+        }
     }
 
     public void GoHelp()

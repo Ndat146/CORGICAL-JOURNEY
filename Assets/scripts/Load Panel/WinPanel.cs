@@ -10,9 +10,18 @@ public class WinPanel : MonoBehaviour
     private Vector3 originalScale;
     private bool isShowing = false;
 
+    public AudioClip winSound;
+    private AudioSource audioSource;
 
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+        {
+            Debug.LogError("Thiếu AudioSource trên WinPanel GameObject.");
+        }
+
         originalScale = winPanel != null ? winPanel.transform.localScale : Vector3.one;
 
         if (winPanel == null)
@@ -44,6 +53,11 @@ public class WinPanel : MonoBehaviour
 
             DOTween.Kill(winPanel.transform); 
             winPanel.SetActive(true);
+
+            if (audioSource != null && winSound != null)
+            {
+                audioSource.PlayOneShot(winSound);
+            }
 
             winPanel.transform.localScale = Vector3.zero;
             winPanel.transform.DOScale(originalScale, 0.5f).SetEase(Ease.OutBack);

@@ -22,11 +22,13 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 lastPlayerPosition;
     private Vector3 lastStickPosition;
 
+    private AudioSource audioSource;  
+    public AudioClip moveSound;
     private void Start()
     {
         animator = GetComponent<Animator>();
         targetRotation = transform.rotation;
-
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -169,6 +171,13 @@ public class PlayerMovement : MonoBehaviour
         isMoving = true;
         animator.SetInteger("AnimationID", 3);
 
+        if (audioSource != null && moveSound != null)
+        {
+            audioSource.clip = moveSound;
+            audioSource.loop = true;  
+            if (!audioSource.isPlaying)
+                audioSource.Play();  
+        }
         float duration = 1f / moveSpeed;
         float elapsed = 0f;
         Vector3 startPosition = transform.position;
@@ -272,10 +281,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isHoldingStick && currentStick != null && IsStandingOnPalmBlock())
         {
-            WinPanel winPanelScript = Object.FindFirstObjectByType<WinPanel>();  // Tìm WinPanel trong scene
+            WinPanel winPanelScript = Object.FindFirstObjectByType<WinPanel>();  
             if (winPanelScript != null)
             {
-                winPanelScript.OnWin();  // Gọi phương thức OnWin() từ script WinPanel
+                winPanelScript.OnWin();  
             }
             else
             {

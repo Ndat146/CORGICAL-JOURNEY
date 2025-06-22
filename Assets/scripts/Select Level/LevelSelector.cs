@@ -12,6 +12,9 @@ public class LevelSelector : MonoBehaviour
     public Transform homeButtonTransform;     
     public Transform selectLevelBannerTransform;
 
+    public AudioClip winSound;
+    private AudioSource audioSource;
+
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded; 
@@ -24,6 +27,12 @@ public class LevelSelector : MonoBehaviour
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource != null && winSound != null)
+        {
+            audioSource.PlayOneShot(winSound);
+        }
+
         DOTween.KillAll();
 
         SetupLevelButtons();
