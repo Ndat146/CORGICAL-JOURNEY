@@ -12,9 +12,15 @@ public class MapSpawner : MonoBehaviour
     public GameObject HomeBtn;
     void Start()
     {
-        water.SetActive(true);
+        water.SetActive(true);  
         HomeBtn.SetActive(true);
         int levelIndex = LevelManager.Instance?.selectedLevelIndex ?? 0;
+        //int levelIndex = 0;
+        //LevelSelectorInGame levelSelector = Object.FindFirstObjectByType<LevelSelectorInGame>();  // Tìm LevelSelectorInGame
+        //if (levelSelector != null)
+        //{
+        //    levelIndex = levelSelector.selectedLevelIndex;  // Lấy level được chọn
+        //}
         MapData currentMap = mapDataManager.levels[levelIndex];
         SpawnMapFromData(currentMap);
     }
