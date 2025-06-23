@@ -49,6 +49,9 @@ public class LevelSelector : MonoBehaviour
     {
         if (scene.name == "SelectLevel")
         {
+            DOTween.KillAll();
+            Debug.Log("Scene SelectLevel loaded");
+            MapDataManager.Instance.SetLevel(LevelManager.Instance.selectedLevelIndex);
             SetupLevelButtons();
         }
     }
@@ -59,6 +62,12 @@ public class LevelSelector : MonoBehaviour
         if (LevelManager.Instance == null)
         {
             Debug.LogError("LevelManager chưa được khởi tạo.");
+            return;
+        }
+
+        if (levelButtons == null || levelButtons.Length == 0)
+        {
+            Debug.LogError("Level Buttons chưa được gán!");
             return;
         }
 
