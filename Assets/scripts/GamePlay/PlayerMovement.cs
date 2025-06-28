@@ -116,7 +116,7 @@ public class PlayerMovement : MonoBehaviour
         isRotating = true;
         Quaternion startRotation = transform.rotation;
         float elapsed = 0f;
-        float duration = 90f / rotateSpeed; 
+        float duration = 90f / rotateSpeed;
 
         while (elapsed < duration)
         {
@@ -126,9 +126,49 @@ public class PlayerMovement : MonoBehaviour
         }
 
         transform.rotation = targetRotation;
+
+        if (isHoldingStick && currentStick != null)
+        {
+            Transform endA = currentStick.transform.Find("EndA");
+            Transform endB = currentStick.transform.Find("EndB");
+
+            if (endA != null && endB != null)
+            {
+                Vector3Int playerGrid = Vector3Int.RoundToInt(transform.position);
+                Vector3Int endAGrid = Vector3Int.RoundToInt(endA.position);
+                Vector3Int endBGrid = Vector3Int.RoundToInt(endB.position);
+
+                bool isEndAInMouth = playerGrid == endAGrid;
+                bool isEndBInMouth = playerGrid == endBGrid;
+
+                Transform otherEnd = isEndAInMouth ? endB : endA;
+
+                // Nếu đầu còn lại chạm vào cây thì rollback
+                if (IsBlockTreeAt(otherEnd.position))
+                {
+                    yield return StartCoroutine(RotateBackSmoothly(targetRotation, startRotation));
+                }
+            }
+        }
+
         animator.SetInteger("AnimationID", 0);
         isRotating = false;
     }
+    private IEnumerator RotateBackSmoothly(Quaternion fromRotation, Quaternion toRotation)
+    {
+        float rollbackDuration = 0.15f;
+        float elapsed = 0f;
+
+        while (elapsed < rollbackDuration)
+        {
+            transform.rotation = Quaternion.Slerp(fromRotation, toRotation, elapsed / rollbackDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.rotation = toRotation;
+    }
+
 
     private void TryMove(Vector3 direction)
     {
