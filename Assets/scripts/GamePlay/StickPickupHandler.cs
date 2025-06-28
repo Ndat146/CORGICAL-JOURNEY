@@ -31,23 +31,34 @@ public class StickPickupHandler : MonoBehaviour
 
     private void TryHoldStick()
     {
-        Collider[] hits = Physics.OverlapSphere(mouthPoint.position, 0.5f);
+        Collider[] hits = Physics.OverlapSphere(mouthPoint.position, 0.3f);
         foreach (var hit in hits)
         {
-            if (hit.CompareTag("Stick")) 
+            if (hit.CompareTag("Stick"))
             {
                 Transform endPoint = hit.transform;
-                GameObject stick = endPoint.parent.gameObject; 
+                GameObject stick = endPoint.parent.gameObject;
+
+                Transform endA = stick.transform.Find("EndA");
+                Transform endB = stick.transform.Find("EndB");
+
+                if (endA == null || endB == null) continue;
+
+                Vector3 stickDirection = (endB.position - endA.position).normalized;
+                Vector3 playerForward = transform.forward;
+
+                float dot = Mathf.Abs(Vector3.Dot(stickDirection, playerForward));
+                if (dot > 0.3f) 
+                {
+                    Debug.Log("Stick is not perpendicular to player, cannot pick up.");
+                    continue;
+                }
 
                 currentStick = stick;
 
-                // Tính offset giữa đầu gậy và object cha
                 Vector3 offset = stick.transform.position - endPoint.position;
-
                 stick.transform.SetParent(mouthPoint);
-
                 stick.transform.position = mouthPoint.position + offset;
-
 
                 var rb = stick.GetComponent<Rigidbody>();
                 if (rb != null)
@@ -55,10 +66,11 @@ public class StickPickupHandler : MonoBehaviour
 
                 isHoldingStick = true;
 
-                Object.FindFirstObjectByType<PlayerMovement>().isHoldingStick = true;
-                Object.FindFirstObjectByType<PlayerMovement>().currentStick = currentStick;
+                var player = Object.FindFirstObjectByType<PlayerMovement>();
+                player.isHoldingStick = true;
+                player.currentStick = currentStick;
 
-
+                break; 
             }
         }
     }
